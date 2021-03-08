@@ -19,9 +19,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name',
         'email',
-        'password',
     ];
 
     /**
@@ -30,7 +28,6 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'role',
         'password',
         'remember_token',
     ];
@@ -45,13 +42,11 @@ class User extends Authenticatable
     ];
 
     /**
-     * Set the user's password.
+     * User tasks (only applicable for users with role = ROLE_USER)
      *
-     * @param  string  $value
-     * @return void
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function setPasswordAttribute($value)
-    {
-        $this->attributes['password'] = Hash::make($value);
+    public function tasks() {
+        return $this->belongsToMany(Task::class)->withTimestamps()->withPivot('finished', 'completed');
     }
 }

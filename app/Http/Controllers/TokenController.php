@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
+use App\Http\Response\HttpResponse;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -19,17 +20,12 @@ class TokenController extends Controller
             ->first();
 
         if ($user && Hash::check($password, $user->password)) {
+            // Instead of creating token each time, we can check if
+            // there is already existing token and send that one, until it expires
             $token = $user->createToken($email);
+            return HttpResponse::response('Success', ['token' => $token, 'role' => $user->role]);
         }
 
-        // TODO: Refactor maybe??
-        if ($token) {
-            return ['token' => $token, 'role' => $user->role];
-        }
-
-        return response()->json([
-            'message' => 'Wrong credentials',
-            'data' => []
-        ], 401);
+        return response()->json(HttpResponse::response('Wrong credentials', [], 401), 401);
     }
 }

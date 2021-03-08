@@ -3,7 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
-    TokenController
+    TokenController,
+    RegistrationController,
+    TaskController
 };
 
 /*
@@ -17,8 +19,9 @@ use App\Http\Controllers\{
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/task/create', [TaskController::class, 'create']);
 });
 
 Route::post('/tokens/create', [TokenController::class, 'createToken']);
+Route::post('/register', [RegistrationController::class, 'register']);
